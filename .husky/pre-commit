@@ -1,0 +1,59 @@
+#!/bin/sh
+
+# expected
+# shellcheck disable=SC1091
+. "$(dirname "$0")/__"
+
+echo
+printHeader "PRE COMMIT-SCRIPT"
+
+# Check staged changes to commit
+printSubHeader "Check staged changes to commit"
+staged=$(git diff --name-only --cached || echo "")
+if [ -z "$staged" ]; then
+  printSkipped "Nothing to commit."
+  echo
+  exit 0
+fi
+printPassed "Staged changes were found."
+echo
+
+# Check unstaged changes
+printSubHeader "Check unstaged changes from staged files"
+changes=$(git status --short | grep "^MM" || echo "")
+if [ -n "$changes" ]; then
+  printRed "$changes"
+  echo
+  exit 1
+fi
+printPassed "No unstaged changes."
+echo
+
+# Check files extension
+ext_list="\.(js|cjs|mjs|jsx|ts|cts|mts|tsx|json|jsonc|json5|css|scss|less|sass)$"
+need_checks=$(echo "$staged" | grep -E $ext_list || echo "")
+if [ -z "$need_checks" ]; then
+  # Check format (skipped)
+  printSubHeader "Check format on staged files..."
+  printSkipped "No file to check."
+  echo
+
+  # Check lint (skipped)
+  printSubHeader "Check lint on staged files..."
+  printSkipped "No file to check."
+  exit 0
+fi
+
+# Check format
+printSubHeader "Check format on staged files..."
+bunx biome check --fix --staged --no-errors-on-unmatched --linter-enabled=false
+printPassed "Format"
+echo
+
+# Check lint
+printSubHeader "Check lint on staged files..."
+bun biome lint --fix --staged --no-errors-on-unmatched
+printPassed "Lint"
+
+# Reindex staged files
+git update-index --again

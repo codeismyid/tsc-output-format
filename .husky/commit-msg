@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# expected
+# shellcheck disable=SC1091
+. "$(dirname "$0")/__"
+
+echo
+printHeader "COMMIT-MSG SCRIPT"
+
+# Check commit message
+printSubHeader "Check commit message"
+bunx --bun commitlint -c --verbose --edit "$1"
+
+echo

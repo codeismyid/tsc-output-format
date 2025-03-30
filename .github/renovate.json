@@ -1,0 +1,109 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:best-practices",
+    ":semanticCommits",
+    ":semanticCommitScopeDisabled"
+  ],
+  "labels": ["renovate", "bot"],
+  "schedule": ["at any time"],
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 0,
+  "dependencyDashboardTitle": "Renovate Dependency Dashboard",
+  "dependencyDashboardLabels": ["renovate", "bot"],
+  "dependencyDashboardOSVVulnerabilitySummary": "all",
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "addLabels": ["dependency", "security"],
+    "groupName": null,
+    "schedule": ["at any time"],
+    "dependencyDashboardApproval": false,
+    "minimumReleaseAge": null,
+    "rangeStrategy": "pin",
+    "prCreation": "immediate",
+    "vulnerabilityFixStrategy": "lowest",
+    "additionalBranchPrefix": "security/",
+    "branchTopic": "{{{datasource}}}-{{{depNameSanitized}}}",
+    "commitMessageSuffix": "due to security vulnerability",
+    "commitBody": "Resolve security vulnerability with {{{vulnerabilitySeverity}}} severity level",
+    "packageRules": [
+      {
+        "matchDepTypes": ["dependencies"],
+        "semanticCommitType": "fix"
+      }
+    ]
+  },
+  "pin": {
+    "extends": ["mergeConfidence:all-badges", "security:openssf-scorecard"],
+    "rebaseWhen": "behind-base-branch",
+    "groupName": "",
+    "groupSlug": null,
+    "group": {},
+    "commitMessageAction": "pin",
+    "prBodyDefinitions": {
+      "Change": "`{{#if currentDigestShort}}{{{currentDigestShort}}}{{else}}{{{currentValue}}}{{/if}}` -> `{{#if newDigestShort}}{{{newDigestShort}}}{{else}}{{{newValue}}}{{/if}}`"
+    }
+  },
+  "pinDigest": {
+    "extends": ["mergeConfidence:all-badges", "security:openssf-scorecard"],
+    "rebaseWhen": "behind-base-branch",
+    "groupName": "",
+    "groupSlug": "",
+    "group": {},
+    "commitMessageAction": "pin",
+    "prBodyDefinitions": {
+      "Change": "`{{#if currentDigestShort}}{{{currentDigestShort}}}{{else}}{{{currentValue}}}{{/if}}` -> `{{#if newDigestShort}}{{{newDigestShort}}}{{else}}{{{newValue}}}{{/if}}`"
+    }
+  },
+  "packageRules": [
+    {
+      "rebaseWhen": "behind-base-branch",
+      "matchFileNames": ["**/bun.lock?(b)", "**/package.json"],
+      "additionalBranchPrefix": "{{{datasource}}}/",
+      "addLabels": ["dependency"],
+      "semanticCommitType": "build",
+      "commitMessageExtra": "from {{#if currentDigestShort}}{{{currentDigestShort}}}{{else}}{{{currentValue}}}{{/if}} to {{#if newDigestShort}}{{{newDigestShort}}}{{else}}{{{newValue}}}{{/if}}"
+    },
+    {
+      "matchDepTypes": ["dependencies"],
+      "commitMessageTopic": "dependency {{{depName}}}"
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "commitMessageTopic": "dev-dependency {{{depName}}}"
+    },
+    {
+      "matchDepTypes": ["peerDependencies"],
+      "commitMessageTopic": "peer-dependency {{{depName}}}"
+    },
+    {
+      "rebaseWhen": "behind-base-branch",
+      "matchFileNames": [
+        "**/{workflow-templates,.github,.gitea,.forgejo}/{workflows,actions}/*.yaml",
+        "**/action.yaml"
+      ],
+      "pinDigests": true,
+      "additionalBranchPrefix": "{{{datasource}}}/",
+      "addLabels": ["dependency", "workflow"],
+      "semanticCommitType": "ci",
+      "commitMessageTopic": "{{{depType}}} {{{depName}}}",
+      "commitMessageExtra": "from {{#if currentDigestShort}}{{{currentDigestShort}}}{{else}}{{{currentValue}}}{{/if}} to {{#if newDigestShort}}{{{newDigestShort}}}{{else}}{{{newValue}}}{{/if}}"
+    },
+    {
+      "matchFileNames": ["**/*"],
+      "prBodyDefinitions": {
+        "OpenSSF": "[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/{{sourceRepo}}/badge)](https://securityscorecards.dev/viewer/?uri=github.com/{{sourceRepo}})"
+      },
+      "matchUpdateTypes": ["patch", "minor", "major"],
+      "prBodyColumns": [
+        "Package",
+        "Change",
+        "Age",
+        "Adoption",
+        "Passing",
+        "Confidence",
+        "OpenSSF"
+      ]
+    }
+  ]
+}

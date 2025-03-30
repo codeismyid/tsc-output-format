@@ -1,0 +1,43 @@
+#!/bin/sh
+
+if [ "$CI" = 'true' ]; then
+  exit 0
+fi
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BOLD='\033[1m'
+RESET='\033[0m'
+BLUE='\033[0;34m'
+
+FAILED="${RED}❌️${RESET}"
+PASSED="${GREEN}✔️${RESET}"
+SKIPPED="${BLUE}➡️${RESET}"
+
+printBold() {
+  printf "%b%s%b" "$BOLD" "$1" "$RESET"
+}
+
+printRed() {
+  printf "%b%s%b\n" "$RED" "$1" "$RESET"
+}
+
+printFailed() {
+  printf "%b %s (failed)\n" "$FAILED" "$1"
+}
+
+printPassed() {
+  printf "%b %s (passed)\n" "$PASSED" "$1"
+}
+
+printSkipped() {
+  printf "%b %s (skipped)\n" "$SKIPPED" "$1"
+}
+
+printHeader(){
+  printf "# %b\n" "$(printBold "$1")"
+}
+
+printSubHeader(){
+  printf "> %s\n" "$1"
+}

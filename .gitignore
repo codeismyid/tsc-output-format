@@ -1,0 +1,11 @@
+# external dependencies
+node_modules/
+
+# distribution files
+dist
+
+# TypeScript cache
+*.tsbuildinfo
+
+# tarball
+*.tgz

@@ -1,0 +1,63 @@
+#!/bin/sh
+
+# expected
+# shellcheck disable=SC1091
+. "$(dirname "$0")/__"
+
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+remote=${1:-origin}
+
+echo
+printHeader "PRE-PUSH SCRIPT"
+
+# Check remote branch
+remote_branch=$(git ls-remote --heads origin "$current_branch" || echo "")
+if [ -z "$remote_branch" ]; then
+  printPassed "Push new branch."
+  echo
+  exit 0
+fi
+
+# Check commit(s) to push
+echo "> Check commit(s) to push"
+commits_to_push=$(git rev-list "$remote/$current_branch..$current_branch" || echo "")
+if [ -z "$commits_to_push" ]; then
+  printSkipped "Nothing to push."
+  echo
+  exit 0
+fi
+printPassed "Commit(s) were found."
+echo
+
+# Check files extension
+ext_list="\.(js|cjs|mjs|jsx|ts|cts|mts|tsx|json|jsonc|json5|css|scss|less|sass)$"
+need_checks=$(git diff --name-only "$remote/$current_branch..$current_branch" | grep -E "$ext_list" || echo "")
+if [ -z "$need_checks" ]; then
+  # Check spec and code coverage (skipped)
+  echo "> Check spec and code coverage..."
+  printSkipped "Spec"
+  printSkipped "Code coverage"
+  echo
+
+  # Check type definition (skipped)
+  echo "> Check type definition..."
+  printSkipped "Type definition"
+  printSkipped "Type coverage"
+  echo
+  exit 0
+fi
+
+# Check spec and code coverage
+echo "> Check spec and code coverage..."
+bun --silent check:spec || exit $?
+printPassed "Spec"
+printPassed "Code coverage"
+echo
+
+# Check type definition
+echo "> Check type definition and type coverage..."
+bun --silent check:type || exit $?
+printPassed "Type definition"
+printPassed "Type coverage"
+
+echo

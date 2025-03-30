@@ -1,0 +1,97 @@
+{
+  "name": "tsc-output-format",
+  "version": "0.0.0",
+  "description": "Format Typescript compiler (tsc) diagnostic output into JSON, GHA Annotations, and more",
+  "author": "codeismyid",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codeismyid/tsc-output-format.git"
+  },
+  "homepage": "https://github.com/codeismyid/tsc-output-format#readme",
+  "bugs": {
+    "url": "https://github.com/codeismyid/tsc-output-format/issues"
+  },
+  "files": ["dist"],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "keywords": [
+    "tsc",
+    "tsc-output",
+    "tsc-output-parser",
+    "tsc-output-format",
+    "typescript"
+  ],
+  "scripts": {
+    "prepare": "bunx husky || true",
+    "ci": "bun install --frozen-lockfile",
+    "clean": "bun clean:deps && bun clean:docs && bun clean:dist && bun clean:codecov",
+    "clean:deps": "rm -rf node_modules && rm -f bun.lockb && rm -f bun.lock",
+    "clean:dist": "rm -rf dist",
+    "check": "bun check:type && bun check:spec && bun check:format && bun check:lint",
+    "check:format": "bunx biome check --linter-enabled=false",
+    "check:lint": "bunx biome lint",
+    "check:spec": "bun test --coverage",
+    "check:type": "bunx tsc && bunx type-coverage",
+    "dist": "bun clean:dist && bun ./scripts/dist.ts && bunx publint",
+    "fix": "bun fix:format && bun fix:lint",
+    "fix:format": "bunx biome check --linter-enabled=false --fix",
+    "fix:lint": "bunx biome lint --fix",
+    "reinstall": "bun clean:deps && bun install",
+    "release": "bun ./scripts/release.ts"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@commitlint/cli": "19.8.0",
+    "@commitlint/types": "19.5.0",
+    "@types/bun": "latest",
+    "chalk": "5.4.1",
+    "commitlint-format": "1.0.2",
+    "conventional-changelog-conventionalcommits": "8.0.0",
+    "esbuild": "0.25.1",
+    "husky": "9.1.7",
+    "publint": "0.3.9",
+    "semantic-release": "24.2.3",
+    "tsc-alias": "1.8.11",
+    "type-coverage": "2.29.7",
+    "typescript": "5.8.2"
+  },
+  "module": "./dist/src/index.mjs",
+  "main": "./dist/src/index.cjs",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.mjs",
+      "require": "./dist/src/index.cjs"
+    },
+    "./*": {
+      "types": "./dist/src/*/index.d.ts",
+      "import": "./dist/src/*/index.mjs",
+      "require": "./dist/src/*/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "tsc-output-format": "./dist/bin/tsc-output-format.cjs"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "bun",
+      "onFail": "warn"
+    },
+    "packageManager": {
+      "name": "bun",
+      "onFail": "warn"
+    }
+  },
+  "typeCoverage": {
+    "atLeast": 100,
+    "showRelativePath": true,
+    "strict": true,
+    "ignoreAsAssertion": true,
+    "ignoreEmptyType": true
+  },
+  "trustedDependencies": ["@biomejs/biome"]
+}

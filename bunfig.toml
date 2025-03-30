@@ -1,0 +1,11 @@
+[install]
+exact = true
+saveTextLockfile = false
+
+[run]
+silent = true
+
+[test]
+root = "./__tests__"
+coverageSkipTestFiles = true
+coverageThreshold = { lines = 1, functions = 1 }

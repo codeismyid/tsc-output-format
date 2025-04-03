@@ -50,7 +50,7 @@
     "chalk": "5.4.1",
     "commitlint-format": "1.0.2",
     "conventional-changelog-conventionalcommits": "8.0.0",
-    "esbuild": "0.25.1",
+    "esbuild": "0.25.2",
     "husky": "9.1.7",
     "publint": "0.3.9",
     "semantic-release": "24.2.3",

@@ -52,7 +52,7 @@
     "conventional-changelog-conventionalcommits": "8.0.0",
     "esbuild": "0.25.2",
     "husky": "9.1.7",
-    "publint": "0.3.9",
+    "publint": "0.3.10",
     "semantic-release": "24.2.3",
     "tsc-alias": "1.8.13",
     "type-coverage": "2.29.7",

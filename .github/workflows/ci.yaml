@@ -88,7 +88,7 @@ jobs:
 
       - name: Run check (push)
         if: github.event_name == 'push'
-        uses: actions/dependency-review-action@3b139cfc5fae8b618d3eae3675e383bb1769c019 #v4.5.0
+        uses: actions/dependency-review-action@ce3cf9537a52e8119d91fd484ab5b8a807627bf8 # v4.6.0
         with:
           allow-licenses: MIT, ISC, CC0-1.0, Apache-2.0, BSD-3-Clause, Unlicense
           head-ref: ${{ github.sha }}
@@ -99,7 +99,7 @@ jobs:
 
       - name: Run check (pull_request)
         if: github.event_name == 'pull_request'
-        uses: actions/dependency-review-action@3b139cfc5fae8b618d3eae3675e383bb1769c019 #v4.5.0
+        uses: actions/dependency-review-action@ce3cf9537a52e8119d91fd484ab5b8a807627bf8 # v4.6.0
         with:
           allow-licenses: MIT, ISC, CC0-1.0, Apache-2.0, BSD-3-Clause, Unlicense
           fail-on-severity: low

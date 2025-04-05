@@ -7,6 +7,9 @@ export class Parser<MatcherKeys extends readonly string[] = string[]> {
   #matcher: RegExp;
   #matcherKeys: MatcherKeys;
   #inputModifier?: (input: string) => string;
+  #resultModifier?: (
+    result: ParseResult<MatcherKeys>
+  ) => ParseResult<MatcherKeys>;
 
   /**
    * Creates a new Parser instance.
@@ -19,7 +22,10 @@ export class Parser<MatcherKeys extends readonly string[] = string[]> {
   constructor(
     matcher: RegExp,
     matcherKeys: MatcherKeys,
-    inputModifier?: (input: string) => string
+    inputModifier?: (input: string) => string,
+    resultModifier?: (
+      result: ParseResult<MatcherKeys>
+    ) => ParseResult<MatcherKeys>
   ) {
     if (!matcher.global) {
       throw new TypeError("argument 'matcher' must be a global regex.");
@@ -27,6 +33,7 @@ export class Parser<MatcherKeys extends readonly string[] = string[]> {
     this.#matcher = matcher;
     this.#matcherKeys = matcherKeys;
     this.#inputModifier = inputModifier;
+    this.#resultModifier = resultModifier;
   }
 
   /**
@@ -62,7 +69,13 @@ export class Parser<MatcherKeys extends readonly string[] = string[]> {
     );
 
     for (const matchError of matches) {
-      results.push(this.#constructResult(matchError));
+      let result = this.#constructResult(matchError);
+
+      if (this.#resultModifier) {
+        result = this.#resultModifier({ ...result });
+      }
+
+      results.push(result);
     }
 
     return results;

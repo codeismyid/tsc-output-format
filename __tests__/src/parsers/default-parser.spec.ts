@@ -24,6 +24,32 @@ describe('parsers > defaultParser', () => {
             EXPECTED_RESULTS
           );
         });
+
+        it('should return multiline source correctly', () => {
+          expect(defaultParser.parse(ERROR_MOCKS.MULTILINE_SOURCE)).toEqual([
+            {
+              _match: ERROR_MOCKS.MULTILINE_SOURCE,
+              file: 'index.ts',
+              errorCode: 'TS1000',
+              column: '1',
+              line: '1',
+              message: 'Unexpected error.',
+              source: [
+                '1  unexpected_error() as UnexpectedError<',
+                '   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+                '2    unexpected_error',
+                ' ~~~~~~~~~~~~~~~~~~~~',
+                '3  >;',
+                ' ~~~'
+              ].join('\n'),
+              sourceClean: [
+                'unexpected_error() as UnexpectedError<',
+                '  unexpected_error',
+                '>;'
+              ].join('\n')
+            }
+          ]);
+        });
       });
 
       describe('pretty format disabled', () => {

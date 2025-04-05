@@ -144,4 +144,14 @@ index2.ts:1:1 - Unexpected error.
 ${extendedDiagnostics}
 ${verboseFooter}`;
 
-export default { PRETTY, NOT_PRETTY };
+const MULTILINE_SOURCE = `
+index.ts(1,1): error TS1000: Unexpected error.
+
+1  unexpected_error() as UnexpectedError<
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2    unexpected_error
+ ~~~~~~~~~~~~~~~~~~~~
+3  >;
+ ~~~`.trimStart();
+
+export default { PRETTY, NOT_PRETTY, MULTILINE_SOURCE };

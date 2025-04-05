@@ -6,6 +6,7 @@ describe('blueprint > Parser', () => {
   let matcher: RegExp;
   let matcherKeys: string[] = [];
   let inputModifier: jest.Mock;
+  let resultModifier: jest.Mock;
   let parser: Parser;
 
   beforeEach(() => {
@@ -13,7 +14,8 @@ describe('blueprint > Parser', () => {
     matcher = /^(\d)(\d)/g;
     matcherKeys = ['first', 'second'];
     inputModifier = jest.fn((input: string) => input);
-    parser = new Parser(matcher, matcherKeys, inputModifier);
+    resultModifier = jest.fn((result: object) => result);
+    parser = new Parser(matcher, matcherKeys, inputModifier, resultModifier);
   });
 
   describe('instantiation', () => {
@@ -50,6 +52,17 @@ describe('blueprint > Parser', () => {
       parser.parse(input);
       expect(inputModifier).toHaveBeenCalledTimes(1);
       expect(inputModifier).toHaveBeenLastCalledWith(input);
+    });
+
+    it('should call resultModifier correctly', () => {
+      expect(resultModifier).toHaveBeenCalledTimes(0);
+      parser.parse(input);
+      expect(resultModifier).toHaveBeenCalledTimes(1);
+      expect(resultModifier).toHaveBeenLastCalledWith({
+        _match: input,
+        first: '1',
+        second: '2'
+      });
     });
   });
 });

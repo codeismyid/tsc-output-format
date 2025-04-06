@@ -173,12 +173,16 @@ const releaseOptions: SemanticRelease.Options = (() => {
 })();
 
 const generateGhaSummary = (nextRelease: SemanticRelease.NextRelease) => {
+  const repoUrl = (releaseOptions.repositoryUrl as string)
+    .replace(/^git\+/, '')
+    .replace(/.git$/, '');
+
   const content = `## 🚀 Release Report
 - Type: ${nextRelease.type}
 - Version: ${nextRelease.version}
 - Tag: ${nextRelease.gitTag}
 
-See this release at this [link](${releaseOptions.repositoryUrl}/releases/tag/${nextRelease.gitTag}).
+See this release at this [link](${repoUrl}/releases/tag/${nextRelease.gitTag}).
 
 ## 📝 Generated Notes
 ${nextRelease.notes}`;

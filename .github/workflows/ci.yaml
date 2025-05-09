@@ -50,7 +50,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up bun@latest
-        uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
+        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
 
       - name: Install dependencies
         run: bun ci
@@ -128,7 +128,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up bun@latest
-        uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
+        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
 
       - name: Install dependencies
         run: bun ci
@@ -161,7 +161,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up bun@latest
-        uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
+        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
 
       - name: Install dependencies
         run: bun ci
@@ -204,7 +204,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up bun@latest
-        uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
+        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
 
       - name: Install dependencies
         run: bun ci

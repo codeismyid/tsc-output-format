@@ -192,7 +192,7 @@ const json = Formatter.jsonFormatter.format(errors);
 const jsonPretty = Formatter.jsonPrettyFormatter.format(errors);
 const grouped = Formatter.groupedFormatter.format(errors);
 const groupedMin = Formatter.groupedMinFormatter.format(errors);
-const supressed = Formatter.suppressedFormatter.format(errors);
+const suppressed = Formatter.suppressedFormatter.format(errors);
 
 // do anything with all outputs...
 ```

@@ -4,12 +4,12 @@ import { runTsc } from './run-tsc';
 const helpText = `
 FORMAT OPTIONS
 
---format-only
+--formatOnly
 Only run format process (value will always 'true' if input is piped).
 type: boolean
 default: false
 
---format-output
+--formatOutput
 Specify generated output.
 one of: ${AVAILABLE_FORMAT_OUTPUT.join(', ')}
 default: raw

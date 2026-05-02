@@ -1,10 +1,10 @@
 import {
-  type Mock,
   afterEach,
   beforeEach,
   describe,
   expect,
   it,
+  type Mock,
   spyOn
 } from 'bun:test';
 import { Cli, Runner, Util } from 'lib';

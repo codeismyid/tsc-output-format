@@ -1,10 +1,10 @@
 import {
-  type Mock,
   afterEach,
   beforeEach,
   describe,
   expect,
   it,
+  type Mock,
   spyOn
 } from 'bun:test';
 import { Util } from 'lib';
@@ -16,23 +16,23 @@ let stdinOnSpy: Mock<typeof process.stdin.on>;
 let formatAndWriteSpy: Mock<typeof Util.formatAndWrite>;
 
 const mockStdinOn = (data = '') => {
-  stdinOnSpy.mockImplementation((event, callback) => {
-    const cb = callback as (...args: unknown[]) => void;
+  stdinOnSpy.mockImplementation(
+    (event: 'data' | 'end', callback: (...args: unknown[]) => void) => {
+      switch (event) {
+        case 'data': {
+          callback(Buffer.from(data));
 
-    switch (event) {
-      case 'data': {
-        cb(Buffer.from(data));
+          break;
+        }
+        case 'end': {
+          callback();
+          break;
+        }
+      }
 
-        break;
-      }
-      case 'end': {
-        cb();
-        break;
-      }
+      return process.stdin;
     }
-
-    return process.stdin;
-  });
+  );
 };
 
 describe('lib > runners > runFormatOnly', () => {

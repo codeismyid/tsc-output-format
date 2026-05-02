@@ -8,4 +8,4 @@ silent = true
 [test]
 root = "./__tests__"
 coverageSkipTestFiles = true
-coverageThreshold = { lines = 1, functions = 1 }
+coverageThreshold = { line = 1, function = 1, statement = 1 }

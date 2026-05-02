@@ -40,6 +40,9 @@
       "package.json": ["./package.json"]
     },
 
+    // Typescript V6
+    "types": ["bun", "node"],
+
     // Others
     "noEmitOnError": true,
     "noErrorTruncation": true,

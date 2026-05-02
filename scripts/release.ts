@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-import { Chalk } from 'chalk';
 import conventionalCommitsChangelog from 'conventional-changelog-conventionalcommits';
 import type { Options as WriterOptions } from 'conventional-changelog-writer';
 import type { ParserOptions } from 'conventional-commits-parser';
@@ -12,7 +11,10 @@ const isGHA =
   GITHUB_ACTIONS &&
   ['1', 'true', 'yes', 'y'].includes(GITHUB_ACTIONS.toLowerCase());
 const isDryRun = !isCI || process.argv.includes('--dry-run');
-const chalk = new Chalk({ level: isCI ? 0 : 2 });
+if (isCI) {
+  process.env.NO_COLOR = 'true';
+}
+const ansis = await import('ansis');
 const RELEASE_BRANCHES: SemanticRelease.BranchSpec[] = ['main'];
 
 const changelogPreset = await conventionalCommitsChangelog({
@@ -167,17 +169,22 @@ const releaseOptions: SemanticRelease.Options = (() => {
   return {
     branches: RELEASE_BRANCHES,
     repositoryUrl: packageJson.repository.url,
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: intended
     tagFormat: 'v${version}',
     plugins
   };
 })();
 
-const generateGhaSummary = (nextRelease: SemanticRelease.NextRelease) => {
-  const repoUrl = (releaseOptions.repositoryUrl as string)
-    .replace(/^git\+/, '')
-    .replace(/.git$/, '');
+const generateSummary = (result: SemanticRelease.Result) => {
+  let content = '## 🚀 Release Report';
 
-  const content = `## 🚀 Release Report
+  if (result) {
+    const { nextRelease } = result;
+    const repoUrl = (releaseOptions.repositoryUrl as string)
+      .replace(/^git\+/, '')
+      .replace(/.git$/, '');
+
+    content += `
 - Type: ${nextRelease.type}
 - Version: ${nextRelease.version}
 - Tag: ${nextRelease.gitTag}
@@ -186,41 +193,38 @@ See this release at this [link](${repoUrl}/releases/tag/${nextRelease.gitTag}).
 
 ## 📝 Generated Notes
 ${nextRelease.notes}`;
+  } else {
+    content += `
+- Type: N/A
+- Version: N/A
+- Tag: N/A
+
+No release published.`;
+  }
 
   return content;
 };
 
 const runRelease = async () => {
   try {
-    const releasing = SemanticRelease.default;
-    const result = await releasing(releaseOptions);
+    const release = SemanticRelease.default;
+    const result = await release(releaseOptions);
 
     console.info('--------------------------------------------------\n');
 
-    if (!result) {
-      console.info('No release published.');
-      return;
-    }
+    const summary = generateSummary(result);
 
-    const { nextRelease } = result;
+    console.info(summary);
 
     if (isGHA) {
-      const summary = generateGhaSummary(nextRelease);
-
-      console.info('Generating github step summary...');
       await Bun.$`printf "%s" "${summary}" >> $GITHUB_STEP_SUMMARY`;
-      console.info('> $GITHUB_STEP_SUMMARY');
-      console.info();
-      console.info('--------------------------------------------------\n');
     }
 
-    console.info(`${chalk.bold('Release Report')}\n`);
-    console.info(`Type: ${nextRelease.type}`);
-    console.info(`Version: ${nextRelease.version}`);
-    console.info(`Tag: ${nextRelease.gitTag}`);
+    console.info();
+    console.info('--------------------------------------------------\n');
   } catch (err) {
     if (err instanceof Error) {
-      console.error(`${err.name}:`, `${chalk.white(err.message)}`);
+      console.error(`${err.name}:`, `${ansis.white(err.message)}`);
     }
 
     process.exit(1);
@@ -232,7 +236,7 @@ const main = async () => {
   await runRelease();
   const endTime = performance.now();
   console.info(
-    `\nrelease script completed in ${chalk.bold(`${(endTime - startTime).toFixed(2)}ms`)}.`
+    `\nrelease script completed in ${ansis.bold(`${(endTime - startTime).toFixed(2)}ms`)}.`
   );
 };
 

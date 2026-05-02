@@ -1,6 +1,5 @@
 #!/usr/bin/env bun
 import path from 'node:path';
-import { Chalk } from 'chalk';
 import esbuild from 'esbuild';
 import tscAlias from 'tsc-alias';
 import tsconfig from 'tsconfig.json';
@@ -18,7 +17,10 @@ type BuildOutput = {
 
 const { CI } = process.env;
 const isCI = CI && ['1', 'true', 'yes', 'y'].includes(CI.toLowerCase());
-const chalk = new Chalk({ level: isCI ? 0 : 2 });
+if (isCI) {
+  process.env.NO_COLOR = 'true';
+}
+const ansis = await import('ansis');
 
 const outdir = 'dist';
 const entryPoints = Array.from(
@@ -169,7 +171,7 @@ const main = async () => {
   const endTime = performance.now();
 
   console.info(
-    `\ndist script completed in ${chalk.bold(`${(endTime - startTime).toFixed(2)}ms`)}.`
+    `\ndist script completed in ${ansis.bold(`${(endTime - startTime).toFixed(2)}ms`)}.`
   );
 };
 

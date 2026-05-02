@@ -1,4 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it, spyOn } from 'bun:test';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  type jest,
+  spyOn
+} from 'bun:test';
 import ERROR_MOCKS from '__tests__/_errors.mock';
 import { Formatter, type FormatterOptions } from 'src/blueprints';
 import { groupedMinFormatter } from 'src/formatters';
@@ -64,7 +72,7 @@ describe('formatters > groupedMinFormatter', () => {
   });
 
   describe('dependence', () => {
-    let spyParse: JestMock.SpiedFunction<typeof defaultParser.parse>;
+    let spyParse: jest.SpiedFunction<typeof defaultParser.parse>;
 
     beforeEach(() => {
       spyParse = spyOn(defaultParser, 'parse');

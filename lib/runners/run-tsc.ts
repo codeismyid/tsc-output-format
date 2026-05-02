@@ -1,6 +1,37 @@
 import { formatAndWrite } from 'lib/utils/format-and-write';
 import type { Context } from 'lib/utils/prepare-context';
 
+const escapeArgs = (args: string[]) => {
+  const escapeArg = (arg: string): string => {
+    if (process.platform === 'win32') {
+      if (/[\s"&<>|^]/.test(arg)) {
+        return `"${arg.replace(/"/g, '""')}"`;
+      }
+
+      return arg;
+    } else {
+      if (/^[a-zA-Z0-9_/:=.-]+$/.test(arg)) {
+        return arg;
+      }
+
+      return `'${arg.replace(/'/g, "'\\''")}'`;
+    }
+  };
+
+  const result: string[] = [];
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+
+    if (arg === '') {
+      continue;
+    }
+
+    result.push(escapeArg(arg));
+  }
+
+  return result.join(' ');
+};
+
 const bun = async (context: Context) => {
   const args = [...context.argvTsc];
   const watchMode = context.watch;
@@ -34,7 +65,18 @@ const node = async (context: Context) => {
   const watchMode = context.watch;
 
   const spawn = (await import('node:child_process')).spawn;
-  const tsc = spawn('npx', ['-p', 'typescript', 'tsc', ...args], {
+
+  let command = `npx -p typescript tsc`;
+  if (args.length > 0) {
+    const escaped = escapeArgs(args);
+
+    if (escaped !== '') {
+      command += ' ';
+      command += escaped;
+    }
+  }
+
+  const tsc = spawn(command, {
     shell: true
   });
 

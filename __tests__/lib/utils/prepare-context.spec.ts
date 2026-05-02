@@ -1,10 +1,10 @@
 import {
-  type Mock,
   afterEach,
   beforeEach,
   describe,
   expect,
   it,
+  type Mock,
   spyOn
 } from 'bun:test';
 import { Util } from 'lib';
@@ -52,7 +52,9 @@ describe('cli > utils > prepareContext', () => {
 
     const context = Util.prepareContext();
 
-    expect(context).toContainKeys(Object.keys(parsedArgv));
+    expect(context).toContainKeys(
+      Object.keys(parsedArgv) as (keyof Util.Context)[]
+    );
     expect(context).toContainValues(Object.values(parsedArgv));
   });
 

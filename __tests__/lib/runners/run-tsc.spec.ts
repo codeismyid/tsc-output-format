@@ -1,10 +1,10 @@
 import {
-  type Mock,
   afterEach,
   beforeEach,
   describe,
   expect,
   it,
+  type Mock,
   spyOn
 } from 'bun:test';
 import * as Node from 'node:child_process';
@@ -166,23 +166,124 @@ describe('lib > runners > runTsc', () => {
     });
 
     describe('spawn cmd', () => {
+      const originalPlatform = process.platform;
+
       it('should have run `npx -p typescript tsc`', async () => {
         await run('node');
-        expect(spawnSpy).toHaveBeenLastCalledWith(
-          'npx',
-          ['-p', 'typescript', 'tsc'],
-          { shell: true }
-        );
+        expect(spawnSpy).toHaveBeenLastCalledWith('npx -p typescript tsc', {
+          shell: true
+        });
       });
 
       it('should use args from context.argvTsc value', async () => {
         context.argvTsc = ['--noEmit', '--strict'];
         await run('node');
         expect(spawnSpy).toHaveBeenLastCalledWith(
-          'npx',
-          ['-p', 'typescript', 'tsc', ...context.argvTsc],
+          'npx -p typescript tsc --noEmit --strict',
           { shell: true }
         );
+      });
+
+      describe('unix os', () => {
+        beforeEach(() => {
+          Object.defineProperty(process, 'platform', {
+            value: 'linux'
+          });
+        });
+
+        afterEach(() => {
+          Object.defineProperty(process, 'platform', {
+            value: originalPlatform
+          });
+        });
+
+        it('should escape args correctly', async () => {
+          context.argvTsc = [
+            '--project',
+            "configs/user's-config.json",
+            '--outDir',
+            'dist folder'
+          ];
+
+          await run('node');
+
+          expect(spawnSpy).toHaveBeenLastCalledWith(
+            "npx -p typescript tsc --project 'configs/user'\\''s-config.json' --outDir 'dist folder'",
+            { shell: true }
+          );
+        });
+
+        it('should ignore empty args correctly', async () => {
+          context.argvTsc = ['--project', ''];
+
+          await run('node');
+
+          expect(spawnSpy).toHaveBeenLastCalledWith(
+            'npx -p typescript tsc --project',
+            { shell: true }
+          );
+        });
+
+        it('should ignore args completely', async () => {
+          context.argvTsc = [''];
+
+          await run('node');
+
+          expect(spawnSpy).toHaveBeenLastCalledWith('npx -p typescript tsc', {
+            shell: true
+          });
+        });
+      });
+
+      describe('windows os', () => {
+        beforeEach(() => {
+          Object.defineProperty(process, 'platform', {
+            value: 'win32'
+          });
+        });
+
+        afterEach(() => {
+          Object.defineProperty(process, 'platform', {
+            value: originalPlatform
+          });
+        });
+
+        it('should escape args correctly', async () => {
+          context.argvTsc = [
+            '--project',
+            "configs/user's-config.json",
+            '--outDir',
+            'dist folder'
+          ];
+
+          await run('node');
+
+          expect(spawnSpy).toHaveBeenLastCalledWith(
+            `npx -p typescript tsc --project configs/user's-config.json --outDir "dist folder"`,
+            { shell: true }
+          );
+        });
+
+        it('should ignore empty args correctly', async () => {
+          context.argvTsc = ['--project', ''];
+
+          await run('node');
+
+          expect(spawnSpy).toHaveBeenLastCalledWith(
+            'npx -p typescript tsc --project',
+            { shell: true }
+          );
+        });
+
+        it('should ignore args completely', async () => {
+          context.argvTsc = [''];
+
+          await run('node');
+
+          expect(spawnSpy).toHaveBeenLastCalledWith('npx -p typescript tsc', {
+            shell: true
+          });
+        });
       });
     });
 

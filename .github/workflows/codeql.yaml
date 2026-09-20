@@ -23,7 +23,7 @@ permissions:
 jobs:
   analyze:
     name: Code analyze
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       security-events: write
     strategy:

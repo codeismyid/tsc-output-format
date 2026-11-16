@@ -9,9 +9,11 @@
   "schedule": ["at any time"],
   "prHourlyLimit": 0,
   "prConcurrentLimit": 0,
-  "dependencyDashboardTitle": "Renovate Dependency Dashboard",
-  "dependencyDashboardLabels": ["renovate", "bot"],
-  "dependencyDashboardOSVVulnerabilitySummary": "all",
+  "dependencyDashboard": {
+    "title": "Renovate Dependency Dashboard",
+    "labels": ["renovate", "bot"],
+    "osvVulnerabilitySummary": "all"
+  },
   "osvVulnerabilityAlerts": true,
   "vulnerabilityAlerts": {
     "addLabels": ["dependency", "security"],
